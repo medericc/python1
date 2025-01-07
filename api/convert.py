@@ -1,4 +1,4 @@
-import youtube_dl
+import yt_dlp
 from urllib.parse import parse_qs
 
 def handler(event, context):
@@ -7,7 +7,7 @@ def handler(event, context):
     video_url = query.get("url", [None])[0]
 
     if not video_url:
-        return {"statusCode": 400, "body": "Please provide a YouTube URL"}
+        return {"statusCode": 400, "body": "Veuillez fournir une URL YouTube"}
 
     ydl_opts = {
         'format': 'best',
@@ -15,14 +15,13 @@ def handler(event, context):
     }
 
     try:
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)
             video_file = ydl.prepare_filename(info)
 
-        # Retourner l'info sur la vidéo
         return {
             "statusCode": 200,
-            "body": f"Video downloaded successfully: {video_file}"
+            "body": f"Vidéo téléchargée avec succès : {video_file}"
         }
 
     except Exception as e:
